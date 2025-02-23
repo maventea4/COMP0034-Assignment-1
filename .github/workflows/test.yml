@@ -34,6 +34,16 @@ jobs:
       run: |
         chmod +x ./tests/chromedriver  # Ensure chromedriver is executable
 
+    - name: Run the app in the background
+      run: |
+        # Run the application in the background (replace with the command that starts your app)
+        nohup python src/app.py &  
+
+    - name: Wait for the app to be ready
+      run: |
+        # Wait a few seconds for the app to fully start
+        sleep 5  # Adjust the time depending on how long your app needs to start
+
     - name: Run tests
       run: |
         pytest
