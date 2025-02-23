@@ -1,1 +1,37 @@
+name: Python CI
+
+# Trigger this workflow when pushing or creating a pull request to the 'main' branch
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Runs the job on an Ubuntu machine
+
+    steps:
+    # Step 1: Checkout the repository code
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    # Step 2: Set up Python (you can change the version to match your project's version)
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'  # Specify your version here
+
+    # Step 3: Install dependencies from requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    # Step 4: Run tests using pytest
+    - name: Run tests
+      run: |
+        pytest tests/test_app.py --maxfail=1 --disable-warnings -q
 
