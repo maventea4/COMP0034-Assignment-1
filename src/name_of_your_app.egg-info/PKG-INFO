@@ -1,0 +1,6 @@
+Metadata-Version: 2.2
+Name: name-of-your-app
+Version: 2025.0.1
+Provides-Extra: testing
+Requires-Dist: pytest; extra == "testing"
+Requires-Dist: selenium; extra == "testing"
