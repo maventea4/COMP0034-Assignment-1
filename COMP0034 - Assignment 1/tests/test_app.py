@@ -22,7 +22,7 @@ def app_url():
 @pytest.fixture(scope="module")
 def driver(app_url):
     options = Options()
-    # options.add_argument("--headless")  # Run Chrome in headless mode
+    options.add_argument("--headless")  # Run Chrome in headless mode
     service = ChromeService(executable_path=CHROME_DRIVER_PATH)
     driver = webdriver.Chrome(service=service, options=options)
     driver.get(app_url)  # Use the app URL from the fixture
