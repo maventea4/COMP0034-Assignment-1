@@ -14,6 +14,14 @@ server = app.server  # Required for deployment
 
 # Load crime data
 def load_crime_data():
+    """Loads and processes the crime data from a CSV file.
+
+    Attempts to load crime data from a predefined path and renames columns. 
+
+    Returns:
+        DataFrame or None: Processed crime data or None if there was an error.
+    """
+
     try:
         crime_csv = Path(__file__).parent.parent.joinpath('data', 'crime_cleaned.csv')
         crime_df = pd.read_csv(crime_csv)
@@ -29,6 +37,11 @@ def load_crime_data():
 
 # Load London boroughs GeoJSON -- Source: https://plotly.com/python/tile-county-choropleth/
 def load_geojson():
+    """Loads the London boroughs GeoJSON data from a predetermined file path.
+
+    Returns:
+        dict or None: Loaded GeoJSON data or None if there was an error.
+    """
     try:
         geojson_path = Path(__file__).parent.parent.joinpath('Data', 'london-boroughs_1179.geojson')
         # Data source: https://cartographyvectors.com/map/1179-london-boroughs
@@ -44,14 +57,32 @@ geojson_data = load_geojson()
 
 # Melt the data for visualization
 def melt_crime_data(df):
+    """ Converts the crime data DataFrame into a long format for easier visualization.
+
+    Args:
+        df (DataFrame): Crime data DataFrame.
+
+    Returns:
+        DataFrame: Long format DataFrame or None if input is invalid. 
+    """
+     
     if df is not None:
         return df.melt(id_vars=['BoroughName', 'MajorCrimeCategory', 'CrimeSubcategory'], 
                        var_name='Month', 
                        value_name='CrimeCount')
     return df
 
+
 # Function to return an empty figure with a message if errors are caught
 def empty_figure(message="No data available"):
+    """Generates an empty Plotly figure with the specified error message.
+
+    Args:
+        message (str): Message to display on the figure.
+
+    Returns:
+        plotly.graph_objects.Figure: Empty figure with a message.
+    """
     fig = go.Figure()
     fig.update_layout(
         title=message,
@@ -71,8 +102,20 @@ def empty_figure(message="No data available"):
 
 crime_df = melt_crime_data(crime_df)
 
-# Extract unique boroughs
-borough_options = [{'label': b, 'value': b} for b in crime_df['BoroughName'].unique()] if crime_df is not None else [{'label': 'No data available', 'value': ''}]
+def get_borough_options(df):
+    """Generates a list of borough options for the dropdown.
+
+    Args:
+        df (DataFrame): The crime data DataFrame.
+
+    Returns:
+        list: A list of dictionaries for the borough dropdown options.
+    """
+    if df is not None:
+        return [{'label': borough, 'value': borough} for borough in df['BoroughName'].unique()]
+    return [{'label': 'No data available', 'value': ''}]
+
+borough_options = get_borough_options(crime_df)
 
 # Define the app layout
 app.layout = html.Div([
@@ -137,6 +180,14 @@ app.layout = html.Div([
     [Input('navigate-button', 'n_clicks')]
 )
 def update_heatmap(n_clicks):
+    """Updates the crime heatmap based on user input. 
+
+    Args:
+        n_clicks (int): Number of times the 'Go to Dashboard' button has been clicked.
+
+    Returns:
+        plotly.graph_objects.Figure: Updated heatmap figure.
+    """
     if crime_df is None or geojson_data is None:
         return empty_figure("Error: No data available")
 
@@ -174,6 +225,18 @@ def update_heatmap(n_clicks):
     [State('borough-selection', 'value')]
 )
 def update_graphs_and_dropdown(n_clicks, selected_major_crime, selected_borough):
+    """Updates graphs and dropdown based on user input.
+
+    Args:
+        n_clicks (int): Number of times the 'Go to Dashboard' button was clicked.
+        selected_major_crime (str): Selected major crime type.
+        selected_borough (str): Selected borough.
+
+    Returns:
+        tuple: Graph container style, updated crime trend graph, pie chart, crime breakdown graph,
+               major crime dropdown options, dropdown style, and selected major crime value.
+    """
+
     if n_clicks == 0 or crime_df is None or not selected_borough:
         return {'display': 'none'}, dash.no_update, dash.no_update, {'display': 'none'}, dash.no_update, [], {'display': 'none'}, dash.no_update
     
