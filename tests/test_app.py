@@ -10,9 +10,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 from src.app import update_heatmap, geojson_data, crime_df
 
-# Path to the ChromeDriver executable
-CHROME_DRIVER_PATH = './tests/chromedriver'
-
 # Keep url as a fixture so that it can be reused across all tests
 @pytest.fixture(scope="module")
 def app_url():
@@ -22,8 +19,9 @@ def app_url():
 @pytest.fixture(scope="module")
 def driver(app_url):
     options = Options()
-    # options.add_argument("--headless")  # Run Chrome in headless mode
-    service = ChromeService(executable_path=CHROME_DRIVER_PATH)
+    options.add_argument("--headless")  # Run Chrome in headless mode
+    # Use webdriver-manager to automatically manage the ChromeDriver
+    service = ChromeService(executable_path=ChromeDriverManager().install())  # This will download and return the path to the latest chromedriver
     driver = webdriver.Chrome(service=service, options=options)
     driver.get(app_url)  # Use the app URL from the fixture
     yield driver
