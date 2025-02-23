@@ -7,6 +7,7 @@ plotly
 dash
 dash-bootstrap-components
 prophet
+black
 # For the Flask app in weeks 6 to 10
 flask
 flask_sqlalchemy
