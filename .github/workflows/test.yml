@@ -12,21 +12,17 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        python-version: [3.8, 3.9, 3.10,3.11]
-
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.11
       uses: actions/setup-python@v2
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: '3.11'
 
     - name: Check Python version
-      run: python --version  # This will display the Python version to confirm
+      run: python --version  # This will display the Python version to confirm it's 3.11
 
     - name: Install dependencies
       run: |
