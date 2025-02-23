@@ -9,6 +9,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.action_chains import ActionChains
 import time
 from src.app import update_heatmap, geojson_data, crime_df
+from webdriver_manager.chrome import ChromeDriverManager
+
 
 # Keep url as a fixture so that it can be reused across all tests
 @pytest.fixture(scope="module")
